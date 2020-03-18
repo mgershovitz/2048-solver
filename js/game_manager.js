@@ -1,8 +1,9 @@
-function GameManager(size, InputManager, Actuator, StorageManager) {
+function GameManager(size, InputManager, Actuator, StorageManager, Solver) {
   this.size           = size; // Size of the grid
   this.inputManager   = new InputManager;
   this.storageManager = new StorageManager;
   this.actuator       = new Actuator;
+  this.solver         = new Solver;
 
   this.startTiles     = 2;
 
@@ -38,7 +39,7 @@ GameManager.prototype.setup = function () {
   // Reload the game from a previous game if present
   if (previousState) {
     this.grid        = new Grid(previousState.grid.size,
-                                previousState.grid.cells); // Reload grid
+        previousState.grid.cells); // Reload grid
     this.score       = previousState.score;
     this.over        = previousState.over;
     this.won         = previousState.won;
@@ -56,6 +57,8 @@ GameManager.prototype.setup = function () {
 
   // Update the actuator
   this.actuate();
+  this.solver.autoPlay();
+
 };
 
 // Set up the initial tiles to start the game with
@@ -227,7 +230,7 @@ GameManager.prototype.findFarthestPosition = function (cell, vector) {
     previous = cell;
     cell     = { x: previous.x + vector.x, y: previous.y + vector.y };
   } while (this.grid.withinBounds(cell) &&
-           this.grid.cellAvailable(cell));
+  this.grid.cellAvailable(cell));
 
   return {
     farthest: previous,
