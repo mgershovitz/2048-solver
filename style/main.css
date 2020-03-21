@@ -138,7 +138,7 @@ hr {
   100% {
     opacity: 1; } }
 .game-container {
-  margin-top: 40px;
+  margin-top: 50px;
   position: relative;
   padding: 15px;
   cursor: default;
@@ -530,6 +530,21 @@ hr {
   text-align: center;
   float: right; }
 
+.strategy-button {
+  display: inline-block;
+  background: #d4bebe;
+  border-radius: 3px;
+  padding: 0 20px;
+  text-decoration: none;
+  color: #3c3937;
+  height: 40px;
+  line-height: 42px;
+  display: block;
+  text-align: center;
+  float: left;
+  margin: 2px;}
+
+
 .game-explanation {
   margin-top: 50px; }
 
@@ -554,6 +569,15 @@ hr {
     padding: 15px 10px;
     min-width: 40px; }
 
+  .strategies-container {
+    content: "";
+    display: block;
+    clear: both;
+    width: 55%;
+    box-sizing: border-box;
+    line-height: 1.65;
+  }
+
   .heading {
     margin-bottom: 10px; }
 
@@ -571,7 +595,7 @@ hr {
     margin-top: 2px; }
 
   .game-container {
-    margin-top: 17px;
+    margin-top: 50px;
     position: relative;
     padding: 10px;
     cursor: default;
@@ -582,7 +606,7 @@ hr {
     -ms-user-select: none;
     -ms-touch-action: none;
     touch-action: none;
-    background: #bbada0;
+    background: #cbc2d0;
     border-radius: 6px;
     width: 280px;
     height: 280px;
@@ -653,7 +677,7 @@ hr {
     margin-right: 10px;
     float: left;
     border-radius: 3px;
-    background: rgba(238, 228, 218, 0.35); }
+    background: rgba(156, 100, 169, 0.35); }
   .grid-cell:last-child {
     margin-right: 0; }
 
