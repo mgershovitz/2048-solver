@@ -9,7 +9,10 @@ function GameManager(size, InputManager, Actuator, StorageManager, Solver) {
 
   this.inputManager.on("restart", this.restart.bind(this));
   this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
-  this.inputManager.on("changeStrategy", this.changeStrategy.bind(this));
+  this.inputManager.on(
+      "playBasicStrategy", this.changeStrategy.bind(this, "basic"));
+  this.inputManager.on(
+      "playRandomStrategy", this.changeStrategy.bind(this, "random"));
   this.setup();
 }
 
@@ -27,11 +30,11 @@ GameManager.prototype.keepPlaying = function () {
 };
 
 // Update solver strategy
-GameManager.prototype.changeStrategy = function () {
-  this.keepPlaying = true;
-  this.actuator.continueGame(); // Clear the game won/lost message
+GameManager.prototype.changeStrategy = function (strategy) {
+  document.getElementById("strategy").innerHTML = strategy;
+  this.solver.changeStrategy(strategy);
+  this.restart();
 };
-
 
 // Return true if the game is lost, or has won and the user hasn't kept playing
 GameManager.prototype.isGameTerminated = function () {
@@ -50,12 +53,14 @@ GameManager.prototype.setup = function () {
     this.over        = previousState.over;
     this.won         = previousState.won;
     this.keepPlaying = previousState.keepPlaying;
+    this.readyToMove = previousState.readyToMove;
   } else {
     this.grid        = new Grid(this.size);
     this.score       = 0;
     this.over        = false;
     this.won         = false;
     this.keepPlaying = false;
+    this.readyToMove = false;
 
     // Add the initial tiles
     this.addStartTiles();
@@ -63,7 +68,7 @@ GameManager.prototype.setup = function () {
 
   // Update the actuator
   this.actuate();
-  window.setTimeout(() => this.move(), 1500);
+  this.autoMove();
 
 };
 
@@ -103,9 +108,10 @@ GameManager.prototype.actuate = function () {
     bestScore:  this.storageManager.getBestScore(),
     terminated: this.isGameTerminated()
   });
+
+  this.readyToMove = !this.isGameTerminated();
+
 };
-
-
 
 // Represent the current game as an object
 GameManager.prototype.serialize = function () {
@@ -137,8 +143,9 @@ GameManager.prototype.moveTile = function (tile, cell) {
 
 // Move tiles on the grid in the specified direction
 GameManager.prototype.move = function () {
-  console.log("moving ", new Date().getTime()/1000);
+  this.readyToMove = false;
   direction = this.solver.getNextMove();
+  console.log("moving ", new Date().getTime()/1000, direction);
   // 0: up, 1: right, 2: down, 3: left
   var self = this;
 
@@ -197,8 +204,8 @@ GameManager.prototype.move = function () {
     }
 
     this.actuate();
-    window.setTimeout(() => this.move(), 1500);
   }
+  this.autoMove();
 };
 
 // Get the vector representing the chosen direction
@@ -280,4 +287,11 @@ GameManager.prototype.tileMatchesAvailable = function () {
 
 GameManager.prototype.positionsEqual = function (first, second) {
   return first.x === second.x && first.y === second.y;
+};
+
+// Place next move action
+GameManager.prototype.autoMove = function () {
+  if (this.readyToMove) {
+    window.setTimeout(() => this.move(), 1500);
+  }
 };

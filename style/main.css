@@ -530,7 +530,8 @@ hr {
   text-align: center;
   float: right; }
 
-.strategy-button {
+.basic-strategy-button,
+.random-strategy-button {
   display: inline-block;
   background: #d4bebe;
   border-radius: 3px;
