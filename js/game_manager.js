@@ -7,10 +7,9 @@ function GameManager(size, InputManager, Actuator, StorageManager, Solver) {
 
   this.startTiles     = 2;
 
-  this.inputManager.on("move", this.move.bind(this));
   this.inputManager.on("restart", this.restart.bind(this));
   this.inputManager.on("keepPlaying", this.keepPlaying.bind(this));
-
+  this.inputManager.on("changeStrategy", this.changeStrategy.bind(this));
   this.setup();
 }
 
@@ -26,6 +25,13 @@ GameManager.prototype.keepPlaying = function () {
   this.keepPlaying = true;
   this.actuator.continueGame(); // Clear the game won/lost message
 };
+
+// Update solver strategy
+GameManager.prototype.changeStrategy = function () {
+  this.keepPlaying = true;
+  this.actuator.continueGame(); // Clear the game won/lost message
+};
+
 
 // Return true if the game is lost, or has won and the user hasn't kept playing
 GameManager.prototype.isGameTerminated = function () {
@@ -57,7 +63,7 @@ GameManager.prototype.setup = function () {
 
   // Update the actuator
   this.actuate();
-  this.solver.autoPlay();
+  window.setTimeout(() => this.move(), 1500);
 
 };
 
@@ -73,7 +79,6 @@ GameManager.prototype.addRandomTile = function () {
   if (this.grid.cellsAvailable()) {
     var value = Math.random() < 0.9 ? 2 : 4;
     var tile = new Tile(this.grid.randomAvailableCell(), value);
-
     this.grid.insertTile(tile);
   }
 };
@@ -98,8 +103,9 @@ GameManager.prototype.actuate = function () {
     bestScore:  this.storageManager.getBestScore(),
     terminated: this.isGameTerminated()
   });
-
 };
+
+
 
 // Represent the current game as an object
 GameManager.prototype.serialize = function () {
@@ -130,7 +136,9 @@ GameManager.prototype.moveTile = function (tile, cell) {
 };
 
 // Move tiles on the grid in the specified direction
-GameManager.prototype.move = function (direction) {
+GameManager.prototype.move = function () {
+  console.log("moving ", new Date().getTime()/1000);
+  direction = this.solver.getNextMove();
   // 0: up, 1: right, 2: down, 3: left
   var self = this;
 
@@ -184,12 +192,12 @@ GameManager.prototype.move = function (direction) {
 
   if (moved) {
     this.addRandomTile();
-
     if (!this.movesAvailable()) {
       this.over = true; // Game over!
     }
 
     this.actuate();
+    window.setTimeout(() => this.move(), 1500);
   }
 };
 

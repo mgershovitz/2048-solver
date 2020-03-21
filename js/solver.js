@@ -1,37 +1,21 @@
+const goUp = 0;
+const goRight = 1;
+const goDown = 2;
+const goLeft = 3;
+
+basicStrategyGenerator = function* () {
+    while (true) {
+        yield goRight;
+        yield goUp;
+        yield goLeft;
+        yield goDown;
+    }
+};
+
 function Solver() {
-    this.goRight = new KeyboardEvent("keydown", {keyCode: 39});
-    this.goLeft = new KeyboardEvent("keydown", {keyCode: 37});
-    this.goUp = new KeyboardEvent("keydown", {keyCode: 38});
-    this.goDown = new KeyboardEvent("keydown", {keyCode: 40});
+    this.strategyGenerator = basicStrategyGenerator();
 }
 
-Solver.prototype.MovesGenerator = function* () {
-    while (true) {
-        yield this.goRight;
-        yield this.goUp;
-        yield this.goLeft;
-        yield this.goDown;
-    }
-
-};
-
-Solver.prototype.moveLoop = function (movesGenerator) {
-
-    window.setTimeout(() => {
-        document.dispatchEvent(movesGenerator.next().value);
-        this.moveLoop(movesGenerator);
-    }, 1500);
-};
-
-
-Solver.prototype.autoPlay = function () {
-// Start auto playing
-    this.moveLoop(this.MovesGenerator());
-//     window.setTimeout(() => {
-//         document.dispatchEvent(this.goRight);
-//         window.setTimeout(() => {
-//             console.log('go left');
-//             document.dispatchEvent(this.goLeft);
-//         }, 1000);
-//     }, 1000);
+Solver.prototype.getNextMove = function () {
+    return this.strategyGenerator.next().value;
 };
