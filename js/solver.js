@@ -24,6 +24,7 @@ randomStrategyGenerator = function* () {
 
 function Solver() {
     this.strategyGenerator = basicStrategyGenerator();
+    this.solverIntervalId = null;
 }
 
 Solver.prototype.changeStrategy = function (strategy) {
@@ -34,11 +35,16 @@ Solver.prototype.changeStrategy = function (strategy) {
         case "random":
             this.strategyGenerator = randomStrategyGenerator();
             break;
-
     }
-
 };
 
 Solver.prototype.getNextMove = function () {
     return this.strategyGenerator.next().value;
+};
+
+Solver.prototype.clearInterval = function () {
+    //Clear old interval and start a new one
+    if (this.solverIntervalId) {
+        window.clearInterval(this.solverIntervalId);
+    }
 };

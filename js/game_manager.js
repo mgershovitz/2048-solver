@@ -14,6 +14,7 @@ function GameManager(size, InputManager, Actuator, StorageManager, Solver) {
   this.inputManager.on(
       "playRandomStrategy", this.changeStrategy.bind(this, "random"));
   this.setup();
+  this.solver.solverIntervalId = window.setInterval(() => this.move(), 1000);
 }
 
 // Restart the game
@@ -21,6 +22,7 @@ GameManager.prototype.restart = function () {
   this.storageManager.clearGameState();
   this.actuator.continueGame(); // Clear the game won/lost message
   this.setup();
+  this.solver.solverIntervalId = window.setInterval(() => this.move(), 1000);
 };
 
 // Keep playing after winning (allows going over 2048)
@@ -66,9 +68,11 @@ GameManager.prototype.setup = function () {
     this.addStartTiles();
   }
 
+  // Clear previous solver
+  this.solver.clearInterval();
+
   // Update the actuator
   this.actuate();
-  this.autoMove();
 
 };
 
@@ -205,7 +209,6 @@ GameManager.prototype.move = function () {
 
     this.actuate();
   }
-  this.autoMove();
 };
 
 // Get the vector representing the chosen direction
@@ -287,11 +290,4 @@ GameManager.prototype.tileMatchesAvailable = function () {
 
 GameManager.prototype.positionsEqual = function (first, second) {
   return first.x === second.x && first.y === second.y;
-};
-
-// Place next move action
-GameManager.prototype.autoMove = function () {
-  if (this.readyToMove) {
-    window.setTimeout(() => this.move(), 1500);
-  }
 };
